@@ -1,0 +1,1899 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Study Helper</title>
+<meta name="description" content="Study Helper — Free batches and educational platforms, all in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<!-- NON-BLOCKING FONTS: page ka JS ab fonts ka wait NAHI karega (fast load) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
+<!-- Firebase modules turant download shuru ho jayein -->
+<link rel="modulepreload" href="js/firebase-app.js">
+<link rel="modulepreload" href="js/firebase-auth.js">
+<link rel="modulepreload" href="js/firebase-database.js">
+
+<style>
+/* ===================================================================
+   STUDY HELPER — Stylesheet
+   =================================================================== */
+
+:root {
+  --bg: #0B0B0D;
+  --bg-soft: #111114;
+  --surface: #17171A;
+  --surface-hi: #1E1E22;
+  --border: #2A2A2F;
+  --border-glow: rgba(245, 166, 35, 0.35);
+  --accent: #F5A623;
+  --accent-dim: #C9821A;
+  --accent-tint: rgba(245, 166, 35, 0.12);
+  --text: #F3F3F1;
+  --text-muted: #A3A3AA;
+  --text-faint: #6C6C74;
+  --success: #3FC97A;
+  --danger: #E8574F;
+  --danger-tint: rgba(232, 87, 79, 0.12);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.hidden { display: none !important; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+input, textarea { font-family: inherit; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+/* ===================== APP WRAPPER ===================== */
+/* Header scrolls naturally with the page (not fixed) — page itself scrolls */
+
+.app-wrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: var(--safe-top);
+  padding-bottom: calc(24px + var(--safe-bottom));
+  position: relative;
+}
+
+/* ===================== HEADER (scrolls with content) ===================== */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 18px 0;
+}
+
+.bell-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  position: relative;
+  flex: 0 0 auto;
+}
+.bell-btn:active { background: var(--surface-hi); }
+.bell-btn svg { width: 19px; height: 19px; }
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 18px 24px 26px;
+}
+
+.hero-logo-wrap {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 24px var(--border-glow);
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-logo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+.hero-title .accent-word { color: var(--accent); }
+
+.hero-tagline {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ===================== SEARCH ===================== */
+
+.search-wrap {
+  padding: 0 18px 18px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 13px 18px;
+}
+.search-box svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-faint);
+  flex: 0 0 auto;
+}
+.search-input {
+  flex: 1 1 auto;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 14.5px;
+  min-width: 0;
+}
+.search-input::placeholder { color: var(--text-faint); }
+
+/* ===================== GRID ===================== */
+
+.grid-section {
+  padding: 4px 18px 10px;
+}
+
+.results-count {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin: 0 2px 12px;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .tile-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 900px) {
+  .tile-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+}
+.tile:active {
+  transform: scale(0.97);
+  border-color: var(--accent-dim);
+}
+
+.tile-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+.tile-badge.unlocked {
+  background: rgba(63,201,122,0.15);
+  color: var(--success);
+}
+.tile-badge.locked {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-faint);
+}
+.tile-badge svg { width: 9px; height: 9px; }
+
+/* Badge shown when admin has turned generation OFF for a tile */
+.tile-badge.unlocked-static {
+  background: rgba(63,201,122,0.15);
+  color: var(--success);
+}
+
+/* ===================== ADMIN — GENERATION TOGGLE SWITCH ===================== */
+
+.gen-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin: 4px 0 8px;
+}
+.gen-toggle-text { min-width: 0; }
+.gen-toggle-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+.gen-toggle-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+.switch { position: relative; display: inline-block; flex: 0 0 auto; }
+.switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.switch .slider {
+  display: block;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #3A3A41;
+  border: 1px solid var(--border);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.switch .slider::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #9A9AA2;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.switch input:checked + .slider {
+  background: rgba(63,201,122,0.22);
+  border-color: var(--success);
+}
+.switch input:checked + .slider::after {
+  transform: translateX(20px);
+  background: var(--success);
+}
+
+.gen-toggle-state {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-align: right;
+  margin-top: 5px;
+}
+.gen-toggle-state.on { color: var(--success); }
+.gen-toggle-state.off { color: var(--danger); }
+
+.gen-warn-box {
+  background: rgba(232,87,79,0.12);
+  border: 1px solid rgba(232,87,79,0.35);
+  color: var(--danger);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.manage-row-sub {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.manage-row-sub.on { color: var(--success); }
+.manage-row-sub.off { color: var(--danger); }
+
+.tile-icon-wrap {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 14px var(--border-glow);
+  overflow: hidden;
+  background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+.tile-icon-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tile-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+.loader-inline {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+}
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.spinner-sm { width: 16px; height: 16px; border-width: 2px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===================== FOOTER ===================== */
+
+.app-footer {
+  text-align: center;
+  padding: 30px 18px 10px;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===================== UNLOCK / ACCESS POPUPS ===================== */
+
+.unlock-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(3px);
+  z-index: 550;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  animation: fadeIn 0.2s ease;
+}
+
+.unlock-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px 22px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 40px rgba(245,166,35,0.08);
+}
+
+.unlock-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--surface-hi);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 17px;
+}
+.unlock-close:active { background: var(--border); }
+
+.unlock-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 16px var(--border-glow);
+  margin: 0 auto 14px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.unlock-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+.unlock-tile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.unlock-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+.unlock-title .accent-word { color: var(--accent); }
+
+.unlock-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.unlock-timer-display {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 4px 0 18px;
+  letter-spacing: 0.5px;
+}
+.unlock-timer-display .unit {
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 3px;
+}
+
+.unlock-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  color: #1A1200;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(245,166,35,0.3);
+}
+.unlock-action-btn:active { filter: brightness(0.95); }
+.unlock-action-btn:disabled { opacity: 0.6; }
+.unlock-action-btn svg { width: 17px; height: 17px; }
+
+.unlock-action-btn.success-btn {
+  background: linear-gradient(135deg, var(--success) 0%, #2A9A5C 100%);
+  color: #06210F;
+  box-shadow: 0 4px 16px rgba(63,201,122,0.28);
+}
+
+.unlock-note {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* ===================== ADMIN LOGIN ===================== */
+
+.admin-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 600;
+  overflow-y: auto;
+  padding: var(--safe-top) 0 var(--safe-bottom);
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.admin-back-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+.admin-back-btn:active { background: var(--surface-hi); }
+.admin-topbar-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.admin-login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 20px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 30px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-login-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1.5px solid var(--accent);
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: var(--bg-soft);
+}
+.admin-login-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+.admin-login-card h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.admin-login-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 0 0 22px;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-soft);
+  margin-bottom: 12px;
+}
+.admin-input:focus { outline: none; border-color: var(--accent); }
+.admin-input::placeholder { color: var(--text-faint); }
+
+.admin-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  color: #1A1200;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.admin-btn:active { filter: brightness(0.95); }
+.admin-btn:disabled { opacity: 0.6; }
+
+.admin-btn-outline {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+}
+.admin-btn-outline:active { background: var(--surface-hi); }
+
+.admin-error {
+  width: 100%;
+  background: var(--danger-tint);
+  color: var(--danger);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  text-align: left;
+}
+.admin-success-msg {
+  width: 100%;
+  background: rgba(63,201,122,0.12);
+  color: var(--success);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* ===================== ADMIN PANEL ===================== */
+
+.admin-panel-body { padding: 18px; }
+
+.admin-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.admin-tab {
+  flex: 1;
+  padding: 10px 4px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+.admin-tab.active {
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+.admin-tab-panel { }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.admin-field-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.admin-form-msg {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+}
+.admin-form-msg.success { background: rgba(63,201,122,0.12); color: var(--success); }
+.admin-form-msg.error { background: var(--danger-tint); color: var(--danger); }
+
+.manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.manage-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.manage-row-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  object-fit: cover;
+  background: var(--bg-soft);
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+}
+.manage-row-info { flex: 1 1 auto; min-width: 0; }
+.manage-row-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.manage-row-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+.manage-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.manage-action-btn.edit { background: var(--accent-tint); color: var(--accent); }
+.manage-action-btn.delete { background: var(--danger-tint); color: var(--danger); }
+
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 700;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.edit-modal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  padding: 18px 18px calc(18px + var(--safe-bottom));
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.edit-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+}
+.edit-modal-head .icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-hi);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.empty-manage {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+/* ===================== BOOT / LOADING SCREEN ===================== */
+#bootScreen {
+  position: fixed; inset: 0; z-index: 900;
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; padding: 24px;
+  transition: opacity .35s ease;
+}
+.boot-logo {
+  width: 84px; height: 84px; border-radius: 20px;
+  border: 2px solid var(--accent); box-shadow: 0 0 24px var(--border-glow);
+  background: var(--surface); overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px;
+}
+.boot-logo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#bootScreen h1 { font-family: var(--font-display); font-size: 26px; font-weight: 700; margin: 0; }
+#bootScreen h1 span { color: var(--accent); }
+#bootMsg { font-size: 13px; color: var(--text-muted); font-weight: 600; margin: 0; }
+#bootRetry {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  color: #1A1200; font-weight: 700; font-size: 14px;
+  padding: 12px 28px; border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(245,166,35,0.3);
+}
+</style>
+</head>
+<body>
+
+<!-- ============ BOOT SCREEN — "Loading, please wait" ============ -->
+<div id="bootScreen">
+  <div class="boot-logo">📚<img src="images/1790449114013-12d2cebe-3fba-4f49-8590-f16d3533e9fa.jpg" alt="" onerror="this.style.opacity=0" style="opacity: 0;"></div>
+  <h1>Study <span>Helper</span></h1>
+  <div class="loader-inline" style="padding:0"><div class="spinner"></div></div>
+  <p id="bootMsg">Loading, please wait…</p>
+  <button id="bootRetry" class="hidden" onclick="location.reload()">↻ Retry</button>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div class="app-wrapper" id="appWrapper">
+
+  <div class="top-bar">
+    <button id="adminBellBtn" class="bell-btn" aria-label="Admin">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-logo-wrap">
+      <img src="images/1790449114013-12d2cebe-3fba-4f49-8590-f16d3533e9fa.jpg" alt="Study Helper" onerror="this.style.opacity=0" style="opacity: 0;">
+    </div>
+    <h1 class="hero-title">Welcome to <span class="accent-word">Study Helper</span></h1>
+    <p class="hero-tagline">Education must be free for everyone</p>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search platforms..." autocomplete="off">
+    </div>
+  </div>
+
+  <div class="grid-section">
+    <p class="results-count" id="resultsCount"></p>
+    <div class="tile-grid" id="tileGrid">
+      <div class="loader-inline"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <div class="app-footer">
+    © <span id="footerYear"></span> Study Helper. All rights reserved.<br>
+    Developed by Krishna
+  </div>
+
+</div>
+
+<!-- ============ UNLOCK / ACCESS POPUP ============ -->
+<div id="unlockPopup" class="unlock-overlay hidden">
+  <div class="unlock-card">
+    <button id="unlockCloseBtn" class="unlock-close" aria-label="Close">×</button>
+    <div class="unlock-logo">
+      <img id="unlockTileLogo" src="" alt="" onerror="this.style.opacity=0" style="opacity: 0;">
+    </div>
+    <p class="unlock-tile-name" id="unlockTileName">Platform</p>
+
+    <!-- State: locked, needs short-link -->
+    <div id="unlockStateLocked">
+      <h2 class="unlock-title">Get <span class="accent-word">24hr Unlimited</span> Access</h2>
+      <p class="unlock-desc">Complete one quick step below to unlock unlimited access to this platform for the next 24 hours — no repeated steps needed until it expires.</p>
+      <button id="getAccessBtn" class="unlock-action-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+        <span id="getAccessBtnText">Get Access Now</span>
+        <div id="getAccessSpinner" class="spinner spinner-sm hidden"></div>
+      </button>
+      <p class="unlock-note">You'll be redirected to complete a short step, then automatically brought back here with access unlocked.</p>
+    </div>
+
+    <!-- State: already unlocked -->
+    <div id="unlockStateActive" class="hidden">
+      <h2 class="unlock-title">🎉 Congratulations!</h2>
+      <p class="unlock-desc">You have unlimited access to this platform.</p>
+      <div class="unlock-timer-display" id="unlockTimerDisplay">24<span class="unit">h</span> 00<span class="unit">m</span></div>
+      <button id="visitNowBtn" class="unlock-action-btn success-btn">
+        <svg viewBox="0 0 24 24" width="17" height="17"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></svg>
+        Visit Now
+      </button>
+    </div>
+
+    <!-- State: expired -->
+    <div id="unlockStateExpired" class="hidden">
+      <h2 class="unlock-title">Access Expired</h2>
+      <div class="unlock-timer-display">00<span class="unit">h</span> 00<span class="unit">m</span></div>
+      <p class="unlock-desc">Your 24 hour access has ended. Complete the step again to unlock another 24 hours of unlimited access.</p>
+      <button id="getAccessBtnExpired" class="unlock-action-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+        <span id="getAccessExpiredBtnText">Get Access Now</span>
+        <div id="getAccessExpiredSpinner" class="spinner spinner-sm hidden"></div>
+      </button>
+    </div>
+
+    <div id="unlockErrorMsg" class="admin-error hidden" style="margin-top: 14px;"></div>
+  </div>
+</div>
+
+<!-- ============ ADMIN SCREEN ============ -->
+<div id="adminScreen" class="admin-screen hidden">
+
+  <!-- Login view -->
+  <div id="adminLoginView">
+    <div class="admin-topbar">
+      <button id="adminCloseBtn1" class="admin-back-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path></svg>
+      </button>
+      <span class="admin-topbar-title">Admin Login</span>
+    </div>
+    <div class="admin-login-wrap">
+      <div class="admin-login-card">
+        <div class="admin-login-logo">
+          <img src="images/1790449114013-12d2cebe-3fba-4f49-8590-f16d3533e9fa.jpg" alt="" onerror="this.style.opacity=0" style="opacity: 0;">
+        </div>
+        <h2>Admin Login</h2>
+        <p class="admin-login-sub">Sign in to manage Study Helper</p>
+        <div id="adminLoginError" class="admin-error hidden"></div>
+        <input type="email" id="adminEmail" class="admin-input" placeholder="Email" autocomplete="username">
+        <input type="password" id="adminPassword" class="admin-input" placeholder="Password" autocomplete="current-password">
+        <button id="adminLoginBtn" class="admin-btn">
+          <span id="adminLoginBtnText">Login</span>
+          <div id="adminLoginSpinner" class="spinner spinner-sm hidden"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel view (post-login) -->
+  <div id="adminPanelView" class="hidden">
+    <div class="admin-topbar">
+      <button id="adminCloseBtn2" class="admin-back-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"></path></svg>
+      </button>
+      <span class="admin-topbar-title">Admin Panel</span>
+    </div>
+
+    <div class="admin-panel-body">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-admin-tab="dashboard">Dashboard</button>
+        <button class="admin-tab" data-admin-tab="add">Add</button>
+        <button class="admin-tab" data-admin-tab="manage">Manage</button>
+      </div>
+
+      <!-- Dashboard -->
+      <div id="adminTab-dashboard" class="admin-tab-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="statVisitors">—</div>
+            <div class="stat-label">Total Visitors</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statPlatforms">—</div>
+            <div class="stat-label">Platforms Live</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add -->
+      <div id="adminTab-add" class="admin-tab-panel hidden">
+        <form id="addForm">
+          <label class="admin-field-label">Title</label>
+          <input type="text" id="fTitle" class="admin-input" placeholder="e.g. PW Books" required="">
+
+          <label class="admin-field-label">Logo image URL</label>
+          <input type="url" id="fLogo" class="admin-input" placeholder="https://..." required="">
+
+          <label class="admin-field-label">Redirect URL</label>
+          <input type="url" id="fLink" class="admin-input" placeholder="https://..." required="">
+
+          <label class="admin-field-label">Short link generation</label>
+          <div class="gen-toggle-row">
+            <div class="gen-toggle-text">
+              <div class="gen-toggle-title">Generate short link</div>
+              <div class="gen-toggle-sub">ON = user must complete the short link. OFF = tile opens the direct URL.</div>
+            </div>
+            <div>
+              <label class="switch">
+                <input type="checkbox" id="fGenerate" checked="">
+                <span class="slider"></span>
+              </label>
+              <div class="gen-toggle-state on" id="fGenerateState">ON</div>
+            </div>
+          </div>
+
+          <button type="submit" class="admin-btn">
+            <span id="addSubmitText">Add</span>
+            <div id="addSubmitSpinner" class="spinner spinner-sm hidden"></div>
+          </button>
+          <div id="addFormMsg" class="admin-form-msg hidden"></div>
+        </form>
+      </div>
+
+      <!-- Manage -->
+      <div id="adminTab-manage" class="admin-tab-panel hidden">
+        <div id="manageList" class="manage-list"></div>
+      </div>
+    </div>
+
+    <!-- Edit modal -->
+    <div id="editModal" class="edit-modal-overlay hidden">
+      <div class="edit-modal">
+        <div class="edit-modal-head">
+          <span>Edit platform</span>
+          <button id="editModalClose" class="icon-btn">×</button>
+        </div>
+        <form id="editForm">
+          <label class="admin-field-label">Title</label>
+          <input type="text" id="eTitle" class="admin-input" required="">
+          <label class="admin-field-label">Logo image URL</label>
+          <input type="url" id="eLogo" class="admin-input" required="">
+          <label class="admin-field-label">Redirect URL</label>
+          <input type="url" id="eLink" class="admin-input" required="">
+
+          <label class="admin-field-label">Short link generation</label>
+          <div class="gen-toggle-row">
+            <div class="gen-toggle-text">
+              <div class="gen-toggle-title">Generate short link</div>
+              <div class="gen-toggle-sub">ON = user must complete the short link. OFF = tile opens the direct URL.</div>
+            </div>
+            <div>
+              <label class="switch">
+                <input type="checkbox" id="eGenerate" checked="">
+                <span class="slider"></span>
+              </label>
+              <div class="gen-toggle-state on" id="eGenerateState">ON</div>
+            </div>
+          </div>
+          <div id="eGenerateWarn" class="gen-warn-box hidden">⚠️ Turning this OFF means users will open the direct URL — no short link, no 24 hour timer.</div>
+
+          <button type="submit" class="admin-btn">
+            <span id="editSubmitText">Save changes</span>
+            <div id="editSubmitSpinner" class="spinner spinner-sm hidden"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+// ===================================================================
+// STUDY HELPER — App Logic
+// ===================================================================
+
+// 👉 REPLACE with your own Firebase project config
+// (Firebase Console → Project Settings → General → Your apps → Web app)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  getDatabase, ref, onValue, push, set, update, remove, runTransaction, get
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDaUpMYj_NlGghHLrijP58Zs6wh2b45k7c",
+  authDomain: "krishnachaurasiaaaa.firebaseapp.com",
+  databaseURL: "https://krishnachaurasiaaaa-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "krishnachaurasiaaaa",
+  storageBucket: "krishnachaurasiaaaa.firebasestorage.app",
+  messagingSenderId: "897089652415",
+  appId: "1:897089652415:web:caafe697dc04d3e899e80a",
+  measurementId: "G-Q2J35TR2VL"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// ===================== DOM HELPERS =====================
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, (c) => ({
+    '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
+  }[c]));
+}
+
+// ===================== STATE =====================
+let platforms = {};
+let adminCurrentUser = null;
+let editingId = null;
+let accessData = {};          // { tileId: unlockedAtTimestamp } for THIS device
+let activeUnlockTileId = null; // which tile the unlock popup is currently showing
+let accessTickerInterval = null;
+
+const ACCESS_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+// 👉 Vplink API config — replace with your own token if different
+const VPLINK_API_TOKEN = "23a35248e9fd9c07cba6ea618b508f726f518080";
+const VPLINK_API_BASE = "https://vplink.in/api";
+
+// 👉 Your confirm.html page's public URL (must be reachable from the internet
+// so Vplink can redirect the user there after they complete the short link)
+const CONFIRM_PAGE_URL = "https://studyhelper.eu.cc/confirm.html";
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  $('#footerYear').textContent = new Date().getFullYear();
+  ensureDeviceId();
+  initSearch();
+  initAdminBell();
+  initAdminLogin();
+  initAdminTabs();
+  initGenerateToggles();
+  initAddForm();
+  initEditModal();
+  initUnlockPopup();
+  bindPlatformsData();
+  bindAccessData();
+  watchAdminAuth();
+  trackVisitor();
+  startAccessTicker();
+
+  // Watchdog: agar 12s tak load na ho to friendly message + Retry dikhao
+  setTimeout(() => {
+    if (!bootDone) showBootRetry('Still loading… agar atka lage to Retry dabao.');
+  }, 12000);
+});
+
+// ===================================================================
+// FIREBASE DATA — Platforms (tiles)
+// ===================================================================
+// Expected DB structure:
+// /platforms/{id} → { title, logo, link, generate, createdAt, clicks }
+// /stats/visitors → number
+// /access/{deviceId}/{tileId} → { unlockedAt: timestamp }
+
+// ---------- GENERATION FLAG HELPERS ----------
+// generate === true  → tile par "Generate" ON: user ko pehle Vplink short
+//                      link complete karna padta hai, uske baad 24 ghante
+//                      unlimited access (timer badge dikhta hai).
+// generate === false → tile par "Generate" OFF: koi short link nahi. Tile
+//                      par hamesha green "unlocked" likha rehta hai aur
+//                      click karte hi seedha redirect URL khul jata hai.
+// generate missing (pehle se add kiye gaye tiles) → ON maana jayega,
+//                      isliye abhi ke saare tiles automatic ON ho gaye hain.
+// Admin panel se har tile ka Generate ON/OFF kabhi bhi badla ja sakta hai.
+
+function isGenerationOn(item) {
+  return !!item && item.generate !== false;
+}
+
+// ---------- BOOT SCREEN control ----------
+let bootDone = false;
+function hideBootScreen() {
+  if (bootDone) return;
+  bootDone = true;
+  const el = document.getElementById('bootScreen');
+  if (el) {
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 400);
+  }
+}
+function showBootRetry(msg) {
+  const r = document.getElementById('bootRetry');
+  const m = document.getElementById('bootMsg');
+  if (m && msg) m.textContent = msg;
+  if (r) r.classList.remove('hidden');
+}
+
+function bindPlatformsData() {
+  onValue(ref(db, 'platforms'), (snap) => {
+    platforms = snap.val() || {};
+    renderTiles();
+    refreshAdminDashboard();
+    hideBootScreen(); // tiles aa gayi -> loading screen hat jao
+
+    // Live sync: agar popup khula hai aur admin ne (kisi bhi device se)
+    // us tile ki generation OFF kar di, to turant direct URL khol do.
+    if (activeUnlockTileId) checkAutoDirectOpen(activeUnlockTileId);
+  }, (err) => {
+    console.error('Failed to load platforms:', err);
+    $('#tileGrid').innerHTML = `<div class="empty-state">Couldn't load platforms right now. Please check your connection.</div>`;
+    showBootRetry('Loading failed. Tap Retry to try again.');
+  });
+}
+
+function trackVisitor() {
+  try {
+    runTransaction(ref(db, 'stats/visitors'), (current) => (current || 0) + 1);
+  } catch (e) {
+    console.error('Visitor tracking failed:', e);
+  }
+}
+
+function trackClick(id) {
+  try {
+    runTransaction(ref(db, `platforms/${id}/clicks`), (current) => (current || 0) + 1);
+  } catch (e) { /* non-critical */ }
+}
+
+// ===================== RENDER TILES =====================
+
+let currentSearchTerm = '';
+
+function renderTiles() {
+  const container = $('#tileGrid');
+  const countEl = $('#resultsCount');
+  let entries = Object.entries(platforms || {});
+
+  if (currentSearchTerm.trim()) {
+    const term = currentSearchTerm.trim().toLowerCase();
+    entries = entries.filter(([, item]) =>
+      (item.title || '').toLowerCase().includes(term)
+    );
+  }
+
+  if (Object.keys(platforms || {}).length === 0) {
+    container.innerHTML = `<div class="empty-state">No platforms available yet. Check back soon!</div>`;
+    countEl.textContent = '';
+    return;
+  }
+
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty-state">No matches found. Try a different search.</div>`;
+    countEl.textContent = '';
+    return;
+  }
+
+  countEl.textContent = `${entries.length} platform${entries.length !== 1 ? 's' : ''} found`;
+
+  container.innerHTML = entries.map(([id, item]) => {
+    const msLeft = getAccessMsLeft(id);
+    const isUnlocked = msLeft > 0;
+    const genOn = isGenerationOn(item);
+
+    // Badge rules:
+    // • generation OFF (admin ne band ki) → hamesha "unlocked" (green)
+    // • generation ON + valid access      → timer (e.g. 23h 59m)
+    // • warna                             → "Locked"
+    let badge;
+    if (!genOn) {
+      badge = `<span class="tile-badge unlocked-static"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>unlocked</span>`;
+    } else if (isUnlocked) {
+      badge = `<span class="tile-badge unlocked"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>${formatHoursLeft(msLeft)}</span>`;
+    } else {
+      badge = `<span class="tile-badge locked"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" stroke-width="2"/></svg>Locked</span>`;
+    }
+
+    return `
+    <div class="tile" data-id="${id}" role="button" tabindex="0">
+      ${badge}
+      <div class="tile-icon-wrap">
+        <img src="${escapeHtml(item.logo || '')}" alt="" onerror="this.style.opacity=0" />
+      </div>
+      <div class="tile-name">${escapeHtml(item.title || 'Untitled')}</div>
+    </div>
+  `;
+  }).join('');
+
+  $$('.tile', container).forEach((tile) => {
+    tile.addEventListener('click', () => {
+      const id = tile.getAttribute('data-id');
+      trackClick(id);
+
+      // Generation OFF → koi short link nahi, seedha URL khulega
+      if (!isGenerationOn(platforms[id])) {
+        openDirectTile(id);
+        return;
+      }
+
+      openUnlockPopup(id);
+    });
+  });
+}
+
+// ===================================================================
+// DIRECT OPEN — generation OFF wale tiles ke liye
+// ===================================================================
+// Jab admin generate OFF kar deta hai to short link ki zarurat nahi —
+// tile par hamesha "unlocked" (green) dikhta hai aur click karne par
+// seedha redirect URL khul jata hai. Koi timer/tracking nahi.
+
+function openDirectTile(tileId) {
+  const item = platforms[tileId];
+  if (!item || !item.link) return;
+  window.open(item.link, '_blank', 'noopener');
+}
+
+// Popup khula hai aur tile ki generation OFF ho gayi → seedha redirect
+function openDirectFromPopup(tileId) {
+  const item = platforms[tileId];
+  if (!item || !item.link) return;
+  window.open(item.link, '_blank', 'noopener');
+  closeUnlockPopup();
+}
+
+function initSearch() {
+  const input = $('#searchInput');
+  let debounceTimer = null;
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      currentSearchTerm = input.value;
+      renderTiles();
+    }, 150);
+  });
+}
+
+// ===================================================================
+// ADMIN — bell icon opens login/panel
+// ===================================================================
+
+function initAdminBell() {
+  $('#adminBellBtn').addEventListener('click', () => {
+    $('#adminScreen').classList.remove('hidden');
+    if (adminCurrentUser) {
+      showAdminPanel();
+    } else {
+      showAdminLogin();
+    }
+  });
+
+  $('#adminCloseBtn1').addEventListener('click', closeAdminScreen);
+  $('#adminCloseBtn2').addEventListener('click', closeAdminScreen);
+}
+
+function closeAdminScreen() {
+  $('#adminScreen').classList.add('hidden');
+}
+
+function showAdminLogin() {
+  $('#adminLoginView').classList.remove('hidden');
+  $('#adminPanelView').classList.add('hidden');
+}
+
+function showAdminPanel() {
+  $('#adminLoginView').classList.add('hidden');
+  $('#adminPanelView').classList.remove('hidden');
+  refreshAdminDashboard();
+}
+
+function watchAdminAuth() {
+  onAuthStateChanged(auth, (user) => {
+    adminCurrentUser = user;
+  });
+}
+
+function initAdminLogin() {
+  const btn = $('#adminLoginBtn');
+  const btnText = $('#adminLoginBtnText');
+  const spinner = $('#adminLoginSpinner');
+  const errorBox = $('#adminLoginError');
+
+  btn.addEventListener('click', async () => {
+    const email = $('#adminEmail').value.trim();
+    const password = $('#adminPassword').value;
+    errorBox.classList.add('hidden');
+
+    if (!email || !password) {
+      errorBox.textContent = 'Please enter both email and password.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.classList.add('hidden');
+    spinner.classList.remove('hidden');
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      $('#adminEmail').value = '';
+      $('#adminPassword').value = '';
+      showAdminPanel();
+    } catch (err) {
+      let msg = 'Login failed. Please try again.';
+      if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(err.code)) {
+        msg = 'Incorrect email or password.';
+      } else if (err.code === 'auth/invalid-email') {
+        msg = 'Please enter a valid email address.';
+      } else if (err.code === 'auth/too-many-requests') {
+        msg = 'Too many attempts. Please try again later.';
+      } else if (err.code === 'auth/network-request-failed') {
+        msg = 'Network error. Check your connection and try again.';
+      }
+      errorBox.textContent = msg;
+      errorBox.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btnText.classList.remove('hidden');
+      spinner.classList.add('hidden');
+    }
+  });
+}
+
+function initAdminTabs() {
+  $$('.admin-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-admin-tab');
+      $$('.admin-tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      $$('.admin-tab-panel').forEach((p) => p.classList.add('hidden'));
+      $('#adminTab-' + target).classList.remove('hidden');
+      if (target === 'dashboard') refreshAdminDashboard();
+      if (target === 'manage') renderManageList();
+    });
+  });
+}
+
+function refreshAdminDashboard() {
+  if (!adminCurrentUser) return;
+  get(ref(db, 'stats/visitors')).then((snap) => {
+    $('#statVisitors').textContent = snap.exists() ? snap.val() : '0';
+  }).catch(() => { $('#statVisitors').textContent = '—'; });
+
+  $('#statPlatforms').textContent = Object.keys(platforms || {}).length;
+}
+
+// ===================== ADMIN — GENERATION TOGGLE (ON/OFF) =====================
+
+function updateToggleStateLabel(stateEl, checkbox) {
+  if (!stateEl || !checkbox) return;
+  stateEl.textContent = checkbox.checked ? 'ON' : 'OFF';
+  stateEl.classList.toggle('on', checkbox.checked);
+  stateEl.classList.toggle('off', !checkbox.checked);
+}
+
+function initGenerateToggles() {
+  const fGen = $('#fGenerate');
+  const eGen = $('#eGenerate');
+
+  if (fGen) {
+    fGen.addEventListener('change', () => updateToggleStateLabel($('#fGenerateState'), fGen));
+    updateToggleStateLabel($('#fGenerateState'), fGen);
+  }
+  if (eGen) {
+    eGen.addEventListener('change', () => {
+      updateToggleStateLabel($('#eGenerateState'), eGen);
+      // OFF karne par warning dikhao (short link + timer band ho jayega)
+      $('#eGenerateWarn').classList.toggle('hidden', eGen.checked);
+    });
+  }
+}
+
+// ===================== ADMIN — ADD =====================
+
+function initAddForm() {
+  $('#addForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const title = $('#fTitle').value.trim();
+    const logo = $('#fLogo').value.trim();
+    const link = $('#fLink').value.trim();
+    const generate = $('#fGenerate').checked;
+
+    const submitBtn = e.target.querySelector('.admin-btn');
+    const submitText = $('#addSubmitText');
+    const submitSpinner = $('#addSubmitSpinner');
+    const msgBox = $('#addFormMsg');
+
+    submitBtn.disabled = true;
+    submitText.textContent = 'Adding...';
+    submitSpinner.classList.remove('hidden');
+    msgBox.classList.add('hidden');
+
+    try {
+      const newRef = push(ref(db, 'platforms'));
+      await set(newRef, {
+        title,
+        logo,
+        link,
+        generate,
+        createdAt: Date.now(),
+        clicks: 0,
+      });
+      msgBox.textContent = '✓ Added successfully!';
+      msgBox.className = 'admin-form-msg success';
+      msgBox.classList.remove('hidden');
+      $('#addForm').reset();
+      updateToggleStateLabel($('#fGenerateState'), $('#fGenerate'));
+    } catch (err) {
+      console.error('Add failed:', err);
+      msgBox.textContent = 'Something went wrong. Please try again.';
+      msgBox.className = 'admin-form-msg error';
+      msgBox.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitText.textContent = 'Add';
+      submitSpinner.classList.add('hidden');
+    }
+  });
+}
+
+// ===================== ADMIN — MANAGE =====================
+
+function renderManageList() {
+  const container = $('#manageList');
+  const entries = Object.entries(platforms || {});
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty-manage">Nothing added yet.</div>`;
+    return;
+  }
+  container.innerHTML = entries.map(([id, item]) => {
+    const genOn = isGenerationOn(item);
+
+    return `
+    <div class="manage-row">
+      <img class="manage-row-logo" src="${escapeHtml(item.logo || '')}" alt="" onerror="this.style.opacity=0" />
+      <div class="manage-row-info">
+        <div class="manage-row-title">${escapeHtml(item.title || 'Untitled')}</div>
+        <div class="manage-row-sub ${genOn ? 'on' : 'off'}">
+          ${genOn ? '⏱ 24hr timer active' : '✓ unlocked (generation off)'}
+        </div>
+      </div>
+      <div class="manage-row-actions">
+        <button class="manage-action-btn edit" data-id="${id}" aria-label="Edit">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="manage-action-btn delete" data-id="${id}" aria-label="Delete">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7m2 0v13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V7h10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+  }).join('');
+
+  $$('.manage-action-btn.edit', container).forEach((btn) => {
+    btn.addEventListener('click', () => openEditModal(btn.getAttribute('data-id')));
+  });
+  $$('.manage-action-btn.delete', container).forEach((btn) => {
+    btn.addEventListener('click', () => handleDeleteItem(btn.getAttribute('data-id')));
+  });
+}
+
+function initEditModal() {
+  $('#editModalClose').addEventListener('click', closeEditModal);
+  $('#editModal').addEventListener('click', (e) => {
+    if (e.target.id === 'editModal') closeEditModal();
+  });
+
+  $('#editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!editingId) return;
+
+    const submitText = $('#editSubmitText');
+    const submitSpinner = $('#editSubmitSpinner');
+    submitText.textContent = 'Saving...';
+    submitSpinner.classList.remove('hidden');
+
+    try {
+      await update(ref(db, `platforms/${editingId}`), {
+        title: $('#eTitle').value.trim(),
+        logo: $('#eLogo').value.trim(),
+        link: $('#eLink').value.trim(),
+        generate: $('#eGenerate').checked,
+      });
+      closeEditModal();
+      renderManageList();
+    } catch (err) {
+      console.error('Edit failed:', err);
+      alert('Could not save changes. Please try again.');
+    } finally {
+      submitText.textContent = 'Save changes';
+      submitSpinner.classList.add('hidden');
+    }
+  });
+}
+
+function openEditModal(id) {
+  const item = platforms[id];
+  if (!item) return;
+  editingId = id;
+  $('#eTitle').value = item.title || '';
+  $('#eLogo').value = item.logo || '';
+  $('#eLink').value = item.link || '';
+
+  // Generation toggle — purane tiles (jinke paas flag nahi) default ON
+  const genOn = isGenerationOn(item);
+  $('#eGenerate').checked = genOn;
+  updateToggleStateLabel($('#eGenerateState'), $('#eGenerate'));
+  $('#eGenerateWarn').classList.toggle('hidden', genOn);
+
+  $('#editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  $('#editModal').classList.add('hidden');
+  editingId = null;
+}
+
+async function handleDeleteItem(id) {
+  const item = platforms[id];
+  const name = item ? item.title : 'this platform';
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try {
+    await remove(ref(db, `platforms/${id}`));
+    renderManageList();
+  } catch (err) {
+    console.error('Delete failed:', err);
+    alert('Could not delete. Please try again.');
+  }
+}
+
+// ===================================================================
+// DEVICE ID — hard-to-tamper random identity for this browser
+// ===================================================================
+// Uses crypto.getRandomValues (cryptographically strong) so the ID
+// can't realistically be guessed or brute-forced, and persists in
+// localStorage across visits until the user clears site data.
+
+const DEVICE_ID_KEY = 'studyhelper_device_id';
+
+function generateSecureDeviceId() {
+  const bytes = new Uint8Array(20);
+  crypto.getRandomValues(bytes);
+  const hex = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return `dev_${hex}`;
+}
+
+function ensureDeviceId() {
+  let id = localStorage.getItem(DEVICE_ID_KEY);
+  if (!id || !/^dev_[a-f0-9]{40}$/.test(id)) {
+    id = generateSecureDeviceId();
+    localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+  return id;
+}
+
+function getDeviceId() {
+  return ensureDeviceId();
+}
+
+// ===================================================================
+// FIREBASE — Access records (/access/{deviceId}/{tileId})
+// ===================================================================
+
+function bindAccessData() {
+  const deviceId = getDeviceId();
+  onValue(ref(db, `access/${deviceId}`), (snap) => {
+    accessData = snap.val() || {};
+    renderTiles(); // refresh badges whenever access state changes
+    // If the unlock popup is open for a tile, refresh its view too
+    if (activeUnlockTileId) refreshUnlockPopupView(activeUnlockTileId);
+  }, (err) => {
+    console.error('Failed to load access data:', err);
+  });
+}
+
+function getAccessMsLeft(tileId) {
+  const record = accessData[tileId];
+  if (!record || !record.unlockedAt) return 0;
+  const elapsed = Date.now() - record.unlockedAt;
+  const left = ACCESS_DURATION_MS - elapsed;
+  return left > 0 ? left : 0;
+}
+
+function formatHoursLeft(msLeft) {
+  const totalMinutes = Math.floor(msLeft / 60000);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${h}h ${m}m`;
+}
+
+function formatTimerDisplay(msLeft) {
+  const totalMinutes = Math.max(0, Math.floor(msLeft / 60000));
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${String(h).padStart(2, '0')}<span class="unit">h</span> ${String(m).padStart(2, '0')}<span class="unit">m</span>`;
+}
+
+// Re-render every 60s so badges/timers count down without needing a click
+function startAccessTicker() {
+  if (accessTickerInterval) clearInterval(accessTickerInterval);
+  accessTickerInterval = setInterval(() => {
+    renderTiles();
+    if (activeUnlockTileId) {
+      // Generation OFF ho gayi? → seedha direct URL
+      if (checkAutoDirectOpen(activeUnlockTileId)) return;
+      refreshUnlockPopupView(activeUnlockTileId);
+    }
+  }, 60000);
+}
+
+// ===================================================================
+// UNLOCK POPUP — locked / active / expired states
+// ===================================================================
+
+function initUnlockPopup() {
+  $('#unlockCloseBtn').addEventListener('click', closeUnlockPopup);
+  $('#unlockPopup').addEventListener('click', (e) => {
+    if (e.target.id === 'unlockPopup') closeUnlockPopup();
+  });
+
+  $('#getAccessBtn').addEventListener('click', () => handleGetAccess());
+  $('#getAccessBtnExpired').addEventListener('click', () => handleGetAccess());
+
+  $('#visitNowBtn').addEventListener('click', () => {
+    const item = platforms[activeUnlockTileId];
+    if (item && item.link) {
+      window.open(item.link, '_blank', 'noopener');
+    }
+  });
+}
+
+// Koi bhi tile jiski generation admin ne OFF ki hai → seedha redirect.
+// Popup khula ho to pehle close karo (user ko short link dikhane ka koi kaam nahi).
+function checkAutoDirectOpen(tileId) {
+  if (!tileId || tileId !== activeUnlockTileId) return false;
+  const item = platforms[tileId];
+  if (!isGenerationOn(item)) {
+    openDirectFromPopup(tileId);
+    return true;
+  }
+  return false;
+}
+
+function openUnlockPopup(tileId) {
+  const item = platforms[tileId];
+  if (!item) return;
+
+  activeUnlockTileId = tileId;
+  $('#unlockTileLogo').src = item.logo || '';
+  $('#unlockTileName').textContent = item.title || 'Platform';
+  $('#unlockErrorMsg').classList.add('hidden');
+
+  refreshUnlockPopupView(tileId);
+  $('#unlockPopup').classList.remove('hidden');
+}
+
+function closeUnlockPopup() {
+  $('#unlockPopup').classList.add('hidden');
+  activeUnlockTileId = null;
+}
+
+function refreshUnlockPopupView(tileId) {
+  if (tileId !== activeUnlockTileId) return;
+
+  // Generation OFF → popup ki koi zarurat nahi, seedha URL khol do
+  if (!isGenerationOn(platforms[tileId])) {
+    openDirectFromPopup(tileId);
+    return;
+  }
+
+  const msLeft = getAccessMsLeft(tileId);
+  const lockedState = $('#unlockStateLocked');
+  const activeState = $('#unlockStateActive');
+  const expiredState = $('#unlockStateExpired');
+
+  lockedState.classList.add('hidden');
+  activeState.classList.add('hidden');
+  expiredState.classList.add('hidden');
+
+  const record = accessData[tileId];
+
+  if (msLeft > 0) {
+    // Currently unlocked
+    activeState.classList.remove('hidden');
+    $('#unlockTimerDisplay').innerHTML = formatTimerDisplay(msLeft);
+  } else if (record && record.unlockedAt) {
+    // Had access before, now expired
+    expiredState.classList.remove('hidden');
+  } else {
+    // Never unlocked
+    lockedState.classList.remove('hidden');
+  }
+}
+
+async function handleGetAccess() {
+  const tileId = activeUnlockTileId;
+  const item = platforms[tileId];
+  if (!item || !tileId) return;
+
+  // Safety: agar admin ne generation OFF kar diya hai to short link banane
+  // ki koi zarurat nahi — seedha redirect URL khol do.
+  if (!isGenerationOn(item)) {
+    openDirectFromPopup(tileId);
+    return;
+  }
+
+  const isExpiredFlow = !!(accessData[tileId] && accessData[tileId].unlockedAt);
+  const btnTextEl = isExpiredFlow ? $('#getAccessExpiredBtnText') : $('#getAccessBtnText');
+  const spinnerEl = isExpiredFlow ? $('#getAccessExpiredSpinner') : $('#getAccessSpinner');
+  const btnEl = isExpiredFlow ? $('#getAccessBtnExpired') : $('#getAccessBtn');
+  const errorBox = $('#unlockErrorMsg');
+
+  errorBox.classList.add('hidden');
+  btnEl.disabled = true;
+  const originalText = btnTextEl.textContent;
+  btnTextEl.textContent = 'Generating link...';
+  spinnerEl.classList.remove('hidden');
+
+  try {
+    const deviceId = getDeviceId();
+    const destinationUrl = `${CONFIRM_PAGE_URL}?tile=${encodeURIComponent(tileId)}&device=${encodeURIComponent(deviceId)}`;
+
+    const apiUrl = `${VPLINK_API_BASE}?api=${VPLINK_API_TOKEN}&url=${encodeURIComponent(destinationUrl)}&format=text`;
+
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error('Short link service unavailable');
+
+    const shortUrl = (await response.text()).trim();
+
+    if (!shortUrl || !shortUrl.startsWith('http')) {
+      throw new Error('Could not generate short link');
+    }
+
+    // Open the short link in a new tab — user completes it there,
+    // Vplink then redirects them to our confirm.html page
+    window.open(shortUrl, '_blank', 'noopener');
+    closeUnlockPopup();
+  } catch (err) {
+    console.error('Get access failed:', err);
+    errorBox.textContent = "Couldn't generate the access link. Please check your connection and try again.";
+    errorBox.classList.remove('hidden');
+  } finally {
+    btnEl.disabled = false;
+    btnTextEl.textContent = originalText;
+    spinnerEl.classList.add('hidden');
+  }
+}
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a433bda22ba3c652',t:'MTc5MDc3NjY4OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; visibility: hidden;"></iframe>
+
+</body></html>
